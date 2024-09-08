@@ -33,7 +33,7 @@ while running:
     window.fill(colors.pastel_green)
 
     fps = int(pygame.Clock.get_fps())
-    fps_text = font.render(f"FPS: {fps}", True, "#")
+    fps_text = font.render(f"FPS: {fps}", True, "#000000")
     window.blit(fps_text, (10, 10))
     
     keys = pygame.key.get_pressed()
