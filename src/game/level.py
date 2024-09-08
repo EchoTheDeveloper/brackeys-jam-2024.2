@@ -3,47 +3,47 @@ import sys
 import colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
 import translations as key
 import config as cfg
-import button as btn
+
 # Initialize Pygame
 pygame.init()
-
 window = pygame.display.set_mode((cfg.WINDOW_HEIGHT, cfg.WINDOW_WIDTH))
 
 # Set window title and translation language
 pygame.display.set_caption(key.ROOT_TITLE)
 
-menu_state = "main"
+# Import after pygame init and window mode set
+import entities.player as player
+
+font = pygame.font.SysFont(None, 36)
 
 # Clock for controlling the frame rate
 CLOCK = pygame.time.Clock()
 
-# Text stuff
-TEXT_COLOR = (255, 255, 255)
-
-def draw_text(text, font, text_color, x, y):
-    img = font.render(text, True, text_color)
-    window.blit(img, (x, y))
-
-play_button = btn.TextButton(320, 340, "Play", "Calibri", "#ffffff", "#000000", 1)
-
 # Main game loop
 running = True
 while running:
+    dt = CLOCK.tick(cfg.DEFAULT_FPS) / 1000
+    
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    keys = pygame.key.get_pressed
 
     # Fill window with background color
-    window.fill(colors.cornflower_blue)
-    
-    if (menu_state == "main"):
-        if play_button.draw(window):
-            print("PLAY")
+    window.fill(colors.pastel_green)
 
+    fps = int(pygame.Clock.get_fps())
+    fps_text = font.render(f"FPS: {fps}", True, "#")
+    window.blit(fps_text, (10, 10))
+    
+    keys = pygame.key.get_pressed()
+    player.move_player(keys, player.player_pos, player.player_speed, dt)
+    
+    if player.current_sprite:
+        window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
     # Update the display
     pygame.display.update()
+
 
 # Quit Pygame
 pygame.quit()
