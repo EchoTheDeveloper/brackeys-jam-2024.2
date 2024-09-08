@@ -1,0 +1,1 @@
+cornflower_blue = (100, 149, 237)

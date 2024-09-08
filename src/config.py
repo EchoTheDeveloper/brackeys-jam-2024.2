@@ -1,0 +1,5 @@
+import pygame
+
+WINDOW_HEIGHT, WINDOW_WIDTH = 640, 480
+PLAYER_SPEED = 5
+
