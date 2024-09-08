@@ -1,5 +1,8 @@
 import pygame
 import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import config as cfg
 import colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
 import translations as key
 import config as cfg
@@ -32,9 +35,9 @@ while running:
     # Fill window with background color
     window.fill(colors.pastel_green)
 
-    fps = int(pygame.Clock.get_fps())
-    fps_text = font.render(f"FPS: {fps}", True, "#000000")
-    window.blit(fps_text, (10, 10))
+    # fps = int(pygame.Clock.get_fps())
+    # fps_text = font.render(f"FPS: {fps}", True, "#000000")
+    # window.blit(fps_text, (10, 10))
     
     keys = pygame.key.get_pressed()
     player.move_player(keys, player.player_pos, player.player_speed, dt)

@@ -39,14 +39,14 @@ sprite_positions = {
     "NE": 6,
     "NW": 7
 }
-num_frames = 7
+num_frames = 6
 idle_frames = 1
 
-sprite_sheet = pygame.image.load(os.path.join('resources', 'textures', 'entities', 'player.png')).convert_alpha()
+sprite_sheet = pygame.image.load(os.path.join('resources', 'textures', 'entities', 'GuyWalk.png')).convert_alpha()
 
 # Use the original sprite dimensions for extraction
-sprite_width = 16
-sprite_height = 16
+sprite_width = 15
+sprite_height = 15
 
 # Get the animated sprites, then scale them individually
 player_sprites = get_animated_sprites_from_sheet(sprite_sheet, sprite_width, sprite_height, sprite_positions, num_frames, idle_frames)
@@ -57,7 +57,7 @@ player_speed = cfg.PLAYER_SPEED
 # Global variables
 current_sprite = None
 current_frame = 0
-frame_rate = 10  # Number of frames per second
+frame_rate = 15  # Number of frames per second can u do git pull
 frame_timer = 0
 last_direction = "S"  # Initialize last_direction to a default value (e.g., "S" for south)
 

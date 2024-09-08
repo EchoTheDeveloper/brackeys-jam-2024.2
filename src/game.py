@@ -24,7 +24,11 @@ def draw_text(text, font, text_color, x, y):
     img = font.render(text, True, text_color)
     window.blit(img, (x, y))
 
-play_button = btn.TextButton(320, 340, "Play", "Calibri", "#ffffff", "#000000", 1)
+# Set the font for text
+# font = pygame.font.Font(pygame.font.match_font('calibri'), 30)
+# play_button = btn.TextButton(320, 340, "Play", font, "#ffffff", "#000000", 1)
+play_img = pygame.image.load("resources/textures/UI/MainMenu/play.png").convert_alpha()
+play_button = btn.ImageButton(170, 100, play_img, 1)
 
 # Main game loop
 running = True
