@@ -94,6 +94,7 @@ while running:
                         cfg.DEBUG = False
                     else:
                         cfg.DEBUG = True
+    LEFTCLICK, MIDDLECLICK, RIGHTCLICK = pygame.mouse.get_pressed(3)
 
     # Fill window with background color
 
@@ -105,7 +106,8 @@ while running:
     MOUSE_RECT = pygame.Rect(0, 0, 25, 25)
     MOUSE_RECT.center = MOUSE_POS
 
-    pygame.draw.rect(window, 'Red', MOUSE_RECT)
+    DIALOGUE_RECT = pygame.Rect(0, 0, 25, 25)
+    DIALOGUE_OUTPUT = ''
 
     keys = pygame.key.get_pressed()
     player.move_player(keys, player.player_pos, player.player_speed, dt)
@@ -120,12 +122,24 @@ while running:
                 #pygame.
 
         if obj.name == 'DLG':
+            DIALOGUE_RECT = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+            DIALOGUE_OUTPUT = obj.properties['Dialogue']
             if cfg.DEBUG:
-                pygame.draw.rect(window, 'Blue', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+                pygame.draw.rect(window, 'Blue', DIALOGUE_RECT, 0)
 
         if obj.name == 'TREE':
             if cfg.DEBUG:
                 pygame.draw.rect(window, 'Green', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+
+        if MOUSE_RECT.colliderect(DIALOGUE_RECT) and RIGHTCLICK:
+            print(DIALOGUE_OUTPUT)
+
+        if MOUSE_RECT.colliderect(DIALOGUE_RECT) and cfg.DEBUG:
+            pygame.draw.rect(window, 'Red', MOUSE_RECT)
+        elif cfg.DEBUG and not MOUSE_RECT.colliderect(DIALOGUE_RECT):
+            pygame.draw.rect(window, 'Green', MOUSE_RECT)
+        else: pass
+
 
     if player.current_sprite:
         window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
