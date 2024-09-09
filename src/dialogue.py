@@ -8,7 +8,7 @@ dialogues = [
 ]
 
 def draw_text_box(text, font, screen, x, y, width):
-    print("SDD" + text)
+    print(text)
     text_surface = font.render(text, True, (255, 255, 255))
     text_rect = text_surface.get_rect(center=(x, y))
     pygame.draw.rect(surface=screen, color=(0, 0, 0), rect=(x - width // 2, y - 50, width, 100))
