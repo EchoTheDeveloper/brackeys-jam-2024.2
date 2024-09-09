@@ -1,19 +1,30 @@
 import pygame
 import sys
 import os
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config as cfg
 import colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
-import translations as key
 import config as cfg
 import dialogue as d
+from pytmx.util_pygame import load_pygame
+
+
+CURR_LANG = 'en_us'
+
+with open(os.path.join('resources', 'langs', f'{CURR_LANG}.json'), 'r') as file:
+    translation = json.load(file)
+
+ROOT_TITLE = translation['root']['title']
+tmx_data = load_pygame(os.path.join('resources', 'tilemaps', 'test.tmx'))
 
 # Initialize Pygame
 pygame.init()
 window = pygame.display.set_mode((cfg.WINDOW_HEIGHT, cfg.WINDOW_WIDTH))
 
+
 # Set window title and translation language
-pygame.display.set_caption(key.ROOT_TITLE)
+pygame.display.set_caption(ROOT_TITLE)
 
 # Import after pygame init and window mode set
 import entities.player as player
@@ -54,6 +65,7 @@ while running:
     
     if player.current_sprite:
         window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
+
     # Update the display
     pygame.display.update()
 
