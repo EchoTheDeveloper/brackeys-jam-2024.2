@@ -16,6 +16,12 @@ try:
 except OSError as e:
     print(f'Error: {e}')
 
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft = pos)
+
 # Initialize Pygame
 pygame.init()
 window = pygame.display.set_mode((cfg.WINDOW_HEIGHT, cfg.WINDOW_WIDTH))
@@ -25,9 +31,8 @@ tmx_path = os.path.join(base_dir, '..', '..', 'resources', 'tilemaps', 'test.tmx
 
 # Load the TMX file using the absolute path
 tmx_data = load_pygame(tmx_path)
+sprite_group = pygame.sprite.Group()
 
-# print objs
-for obj in tmx_data.objectgroups: print(obj)
 
 Ground = tmx_data.get_layer_by_name('Ground')
 Front = tmx_data.get_layer_by_name('Front')
@@ -36,10 +41,22 @@ Front2 = tmx_data.get_layer_by_name('Front2')
 Collision = tmx_data.get_layer_by_name('Collision')
 Interact = tmx_data.get_layer_by_name('Interact')
 
-for col in Collision:
-    if col.type == 'Shape':
-        if obj.name == 'Rectangle':
-            print(obj)
+TILE_SCALE_FACTOR = 2
+
+# Cycle through all layers
+for layer in tmx_data.visible_layers:
+    if layer.name in cfg.LAYERS:
+        for x, y, surf in layer.tiles():
+            pos = (x * 16, y * 16)
+            scaled_surf = pygame.transform.scale(surf, ((surf.get_width() * TILE_SCALE_FACTOR), (surf.get_height() * TILE_SCALE_FACTOR)))
+            Tile(pos = pos, surf = scaled_surf, groups = sprite_group)
+    for obj in tmx_data.objects:
+        pos = obj.x, obj.y
+        surf = obj.image
+        if obj.image:
+            scaled_surf = pygame.transform.scale(surf, (surf.get_width() * TILE_SCALE_FACTOR), (surf.get_height() * TILE_SCALE_FACTOR))
+            Tile(pos = pos, surf = scaled_surf, groups = sprite_group)
+
 
 
 # Set window title and translation language
@@ -72,21 +89,50 @@ while running:
                     else:
                         print("asddad")
                         d.draw_text_box(d.dialogues[index]["text"], font, window, 0, 0, 250)
+                elif event.key == pygame.K_k:
+                    if cfg.DEBUG:
+                        cfg.DEBUG = False
+                    else:
+                        cfg.DEBUG = True
 
     # Fill window with background color
 
     # fps = int(pygame.Clock.get_fps())
     # fps_text = font.render(f"FPS: {fps}", True, "#000000")   
     # window.blit(fps_text, (10, 10))
-    
+
+    MOUSE_POS = pygame.mouse.get_pos()
+    MOUSE_RECT = pygame.Rect(0, 0, 25, 25)
+    MOUSE_RECT.center = MOUSE_POS
+
+    pygame.draw.rect(window, 'Red', MOUSE_RECT)
+
     keys = pygame.key.get_pressed()
     player.move_player(keys, player.player_pos, player.player_speed, dt)
-    
+
+    sprite_group.draw(window)
+    for obj in tmx_data.objects:
+        pos = obj.x, obj.y
+        surf = obj.image
+        if obj.name == 'COL':
+            if cfg.DEBUG:
+                pygame.draw.rect(window, 'Red', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+                #pygame.
+
+        if obj.name == 'DLG':
+            if cfg.DEBUG:
+                pygame.draw.rect(window, 'Blue', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+
+        if obj.name == 'TREE':
+            if cfg.DEBUG:
+                pygame.draw.rect(window, 'Green', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+
     if player.current_sprite:
         window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
 
+
     # Update the display
-    pygame.display.update()
+    pygame.display.flip()
 
 
 # Quit Pygame

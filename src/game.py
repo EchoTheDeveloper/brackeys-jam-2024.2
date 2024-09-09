@@ -42,7 +42,7 @@ while running:
     # Fill window with background color
     window.fill(colors.cornflower_blue)
     
-    if (menu_state == "main"):
+    if menu_state == "main":
         if play_button.draw(window):
             print("PLAY")
 

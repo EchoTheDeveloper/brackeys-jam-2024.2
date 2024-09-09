@@ -42,14 +42,14 @@ The player is at the village, where he lives. But a massive storm is approaching
 The player moves to the village for work but the company never existed. The next train back is the next week. Then the storm is annouced to be coming directly to the village. The storm is actually 2 gods fighting cause magnitude 9 earthquakes, tornados, and tsunamis. The player figures this out from notes in an abandoned office. You have to build deffences. But in the end you have to stop the gods from fighting. It is revealed at the end that a 3rd god is the one who gave you the job that never existed. The end. Also god 1 was angry at god 2 because god 2 stole god 1's crisps (chips for americans) Multiple endings. For example not building any defences and dying, deciding not to break up the god fight, and the cannon ending beating. I like this but sinec we have 1 week what if we add 1 ending or maybe 2 and we can continue after (if we go with this)(sure whoever put thi) ECHO DID aidaoidhjosi
 
 - Gameplay
-  - reasource gathering
+  - resource gathering
   - defence building
-  - dialouge
+  - dialogue
   - multiple endings
   - exploration
 
 ### Idea 3 - The Truth of Cedarveil:
-- Setting: a small towen preparing for a large storm, the town's calm appearance hides dark secrets
+- Setting: a small town preparing for a large storm, the town's calm appearance hides dark secrets
 - Plot: 
   - Introduction: You arrive in town for a casual visit to see your family. Something you have done plenty of times. However something is different this time.
     - Initial Calm: The small town is very peaceful and you are very unsuspecting as to what you will uncover
@@ -65,7 +65,7 @@ The player moves to the village for work but the company never existed. The next
 - Gameplay:
   - Dialogue /w choices
   - Stealth
-  - Investigation/exporation
+  - Investigation/exploration
   - 3 endings (2 before for game jam)
   - Heart rate (your heartrate gets to high when you start making weird choices which leads to people asking if you are ok and can raise suspsion)
   - dynamic storm

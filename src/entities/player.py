@@ -5,7 +5,7 @@ import config as cfg
 import pygame
 import math
 
-SCALING_FACTOR = 8
+SCALING_FACTOR = 4
 
 def get_animated_sprites_from_sheet(sheet, sprite_width, sprite_height, sprite_positions, num_frames, idle_frames=1):
     sprites = {}

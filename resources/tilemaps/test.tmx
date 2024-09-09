@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="11">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="12">
  <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="330" columns="30">
   <image source="../pngdata/terrain.png" width="480" height="176"/>
  </tileset>
  <objectgroup id="4" name="Collision">
-  <object id="2" x="192" y="448" width="80" height="32"/>
-  <object id="3" x="64" y="0" width="16" height="480"/>
-  <object id="5" x="528" y="0" width="16" height="144"/>
-  <object id="6" x="400" y="128" width="128" height="16"/>
-  <object id="7" x="400" y="144" width="16" height="336"/>
+  <object id="2" name="COL" x="192" y="448" width="80" height="32"/>
+  <object id="3" name="COL" x="64" y="0" width="16" height="480"/>
+  <object id="5" name="COL" x="528" y="0" width="16" height="144"/>
+  <object id="6" name="COL" x="400" y="128" width="128" height="16"/>
+  <object id="7" name="COL" x="400" y="144" width="16" height="336"/>
  </objectgroup>
  <objectgroup id="6" name="Interact">
-  <object id="9" x="192" y="368" width="16" height="16">
+  <object id="9" name="DLG" x="192" y="368" width="16" height="16">
    <properties>
     <property name="Dialogue" value="This is a test of a text output!"/>
    </properties>
+  </object>
+  <object id="11" x="-48" y="736">
+   <ellipse/>
   </object>
  </objectgroup>
  <layer id="1" name="Ground" width="40" height="30">
