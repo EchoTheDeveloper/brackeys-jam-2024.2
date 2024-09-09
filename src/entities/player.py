@@ -1,6 +1,11 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Set working directory to the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+os.chdir(project_root)
+
+# Add the project root to the system path to allow module imports
 import config as cfg
 import pygame
 import math
@@ -51,8 +56,16 @@ sprite_height = 15
 # Get the animated sprites, then scale them individually
 player_sprites = get_animated_sprites_from_sheet(sprite_sheet, sprite_width, sprite_height, sprite_positions, num_frames, idle_frames)
 # Set up player variables
-player_pos = [cfg.WINDOW_HEIGHT // 2, cfg.WINDOW_WIDTH // 2] 
+player_pos = [cfg.WINDOW_HEIGHT // 2, cfg.WINDOW_WIDTH // 2]
 player_speed = cfg.PLAYER_SPEED
+
+# Initialize player rect
+player_rect = pygame.Rect(
+    player_pos[0],
+    player_pos[1],
+    sprite_width * SCALING_FACTOR,
+    sprite_height * SCALING_FACTOR
+)
 
 # Global variables
 current_sprite = None
@@ -62,7 +75,7 @@ frame_timer = 0
 last_direction = "S"  # Initialize last_direction to a default value (e.g., "S" for south)
 
 def move_player(keys, pos, speed, dt):
-    global current_sprite, current_frame, frame_timer, last_direction
+    global current_sprite, current_frame, frame_timer, last_direction, player_rect
 
     x, y = pos
     dx, dy = 0, 0
@@ -90,6 +103,9 @@ def move_player(keys, pos, speed, dt):
     # Update position
     pos[0] += dx * speed
     pos[1] += dy * speed
+
+    # Update player rect position
+    player_rect.topleft = (pos[0], pos[1])
 
     # Determine direction based on movement
     if dx > 0 and dy > 0:

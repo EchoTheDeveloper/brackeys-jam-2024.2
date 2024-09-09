@@ -71,41 +71,41 @@ font = pygame.font.SysFont(None, 36)
 CLOCK = pygame.time.Clock()
 
 # Main game loop
+# Initialize the flag
+# Initialize flags
+dialogue_printed = False
+right_click_pressed = False
+
+# Main game loop
 running = True
 while running:
     dt = CLOCK.tick(cfg.DEFAULT_FPS) / 1000
     index = 0
     showing_dialogue = True
+
     # Event handling
     window.fill(colors.pastel_green)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    index += 1
-                    if index >= len(d.dialogues):
-                        showing_dialogue = False
-                    else:
-                        print("asddad")
-                        d.draw_text_box(d.dialogues[index]["text"], font, window, 0, 0, 250)
-                elif event.key == pygame.K_k:
-                    if cfg.DEBUG:
-                        cfg.DEBUG = False
-                    else:
-                        cfg.DEBUG = True
+            if event.key == pygame.K_SPACE:
+                index += 1
+                if index >= len(d.dialogues):
+                    showing_dialogue = False
+                else:
+                    print("asddad")
+                    d.draw_text_box(d.dialogues[index]["text"], font, window, 0, 0, 250)
+            elif event.key == pygame.K_k:
+                cfg.DEBUG = not cfg.DEBUG
 
-    # Fill window with background color
-
-    # fps = int(pygame.Clock.get_fps())
-    # fps_text = font.render(f"FPS: {fps}", True, "#000000")   
-    # window.blit(fps_text, (10, 10))
-
+    LEFTCLICK, MIDDLECLICK, RIGHTCLICK = pygame.mouse.get_pressed(3)
     MOUSE_POS = pygame.mouse.get_pos()
     MOUSE_RECT = pygame.Rect(0, 0, 25, 25)
     MOUSE_RECT.center = MOUSE_POS
 
-    pygame.draw.rect(window, 'Red', MOUSE_RECT)
+    DIALOGUE_RECT = pygame.Rect(0, 0, 25, 25)
+    DIALOGUE_OUTPUT = ''
 
     keys = pygame.key.get_pressed()
     player.move_player(keys, player.player_pos, player.player_speed, dt)
@@ -116,24 +116,37 @@ while running:
         surf = obj.image
         if obj.name == 'COL':
             if cfg.DEBUG:
-                pygame.draw.rect(window, 'Red', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
-                #pygame.
-
+                pygame.draw.rect(window, 'Red',
+                                 (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
         if obj.name == 'DLG':
+            DIALOGUE_RECT = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+            DIALOGUE_OUTPUT = obj.properties['Dialogue']
             if cfg.DEBUG:
-                pygame.draw.rect(window, 'Blue', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
-
+                pygame.draw.rect(window, 'Blue', DIALOGUE_RECT, 0)
         if obj.name == 'TREE':
             if cfg.DEBUG:
-                pygame.draw.rect(window, 'Green', (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+                pygame.draw.rect(window, 'Green',
+                                 (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+
+    # Handle right-click
+    if MOUSE_RECT.colliderect(DIALOGUE_RECT):
+        if RIGHTCLICK and not right_click_pressed:
+            print(DIALOGUE_OUTPUT)
+            dialogue_printed = True
+            right_click_pressed = True
+        elif not RIGHTCLICK:
+            right_click_pressed = False
+
+    if MOUSE_RECT.colliderect(DIALOGUE_RECT) and cfg.DEBUG:
+        pygame.draw.rect(window, 'Red', MOUSE_RECT)
+    elif cfg.DEBUG and not MOUSE_RECT.colliderect(DIALOGUE_RECT):
+        pygame.draw.rect(window, 'Green', MOUSE_RECT)
 
     if player.current_sprite:
         window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
 
-
     # Update the display
     pygame.display.flip()
-
 
 # Quit Pygame
 pygame.quit()
