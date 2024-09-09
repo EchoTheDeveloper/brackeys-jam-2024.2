@@ -1,0 +1,1 @@
+pyinstaller --name "BRACKEYSJAMGAME_debug" --onefile --console --clean --add-data "resources":"bin\dist\exe" --debug --splash "resources\splashscreen.png"
