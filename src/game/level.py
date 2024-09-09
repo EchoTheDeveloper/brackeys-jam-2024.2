@@ -30,7 +30,17 @@ tmx_data = load_pygame(tmx_path)
 for obj in tmx_data.objectgroups: print(obj)
 
 Ground = tmx_data.get_layer_by_name('Ground')
-for tile in Ground.tiles(): print(tile)
+Front = tmx_data.get_layer_by_name('Front')
+Front2 = tmx_data.get_layer_by_name('Front2')
+
+Collision = tmx_data.get_layer_by_name('Collision')
+Interact = tmx_data.get_layer_by_name('Interact')
+
+for col in Collision:
+    if col.type == 'Shape':
+        if obj.name == 'Rectangle':
+            print(obj)
+
 
 # Set window title and translation language
 pygame.display.set_caption(key.ROOT_TITLE)
