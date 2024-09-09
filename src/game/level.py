@@ -3,31 +3,40 @@ import sys
 import os
 import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import config as cfg
-import colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
-import config as cfg
-import dialogue as d
+import src.config as cfg
+import src.colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
+import src.config as cfg
+import src.dialogue as d
+import src.translations as key
 from pytmx.util_pygame import load_pygame
 
-
-CURR_LANG = 'en_us'
-
-with open(os.path.join('resources', 'langs', f'{CURR_LANG}.json'), 'r') as file:
-    translation = json.load(file)
-
-ROOT_TITLE = translation['root']['title']
-tmx_data = load_pygame(os.path.join('resources', 'tilemaps', 'test.tmx'))
+try:
+    os.chdir('../../')
+    print(f'Changed to directory: {os.getcwd()}')
+except OSError as e:
+    print(f'Error: {e}')
 
 # Initialize Pygame
 pygame.init()
 window = pygame.display.set_mode((cfg.WINDOW_HEIGHT, cfg.WINDOW_WIDTH))
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+tmx_path = os.path.join(base_dir, '..', '..', 'resources', 'tilemaps', 'test.tmx')
+
+# Load the TMX file using the absolute path
+tmx_data = load_pygame(tmx_path)
+
+# print objs
+for obj in tmx_data.objectgroups: print(obj)
+
+Ground = tmx_data.get_layer_by_name('Ground')
+for tile in Ground.tiles(): print(tile)
 
 # Set window title and translation language
-pygame.display.set_caption(ROOT_TITLE)
+pygame.display.set_caption(key.ROOT_TITLE)
 
 # Import after pygame init and window mode set
-import entities.player as player
+import src.entities.player as player
 
 font = pygame.font.SysFont(None, 36)
 
