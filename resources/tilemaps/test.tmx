@@ -13,16 +13,9 @@
  <objectgroup id="6" name="Interact">
   <object id="9" name="DLG" x="192" y="368" width="16" height="16">
    <properties>
-    <property name="Dialogue" value="This is a test of a text output!"/>
+    <property name="Dialogue" value="You find a mysterious rock!"/>
    </properties>
   </object>
-  <object id="12" name="DLG" x="-112" y="160"/>
-  <object id="13" name="DLG" x="192" y="0" width="48" height="16">
-   <properties>
-    <property name="Dialogue" value="1"/>
-   </properties>
-  </object>
-  <object id="14" x="480" y="-160"/>
  </objectgroup>
  <layer id="1" name="Ground" width="40" height="30">
   <data encoding="csv">
