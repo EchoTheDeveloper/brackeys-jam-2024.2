@@ -1,9 +1,10 @@
 import pygame
 import sys
-import colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
-import translations as key
-import config as cfg
-import button as btn
+import src.colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
+import src.translations as key
+import src.config as cfg
+import src.button as btn
+import os
 # Initialize Pygame
 pygame.init()
 
@@ -27,6 +28,8 @@ def draw_text(text, font, text_color, x, y):
 # Set the font for text
 # font = pygame.font.Font(pygame.font.match_font('calibri'), 30)
 # play_button = btn.TextButton(320, 340, "Play", font, "#ffffff", "#000000", 1)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(project_root)
 play_img = pygame.image.load("resources/textures/UI/MainMenu/play.png").convert_alpha()
 play_button = btn.ImageButton(170, 100, play_img, 1)
 
@@ -41,11 +44,10 @@ while running:
 
     # Fill window with background color
     window.fill(colors.cornflower_blue)
-    
+
     if menu_state == "main":
         if play_button.draw(window):
-            print("PLAY")
-
+            import src.game.level as lvl
     # Update the display
     pygame.display.update()
 

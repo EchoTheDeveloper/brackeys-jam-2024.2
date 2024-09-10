@@ -3,13 +3,11 @@ import sys
 import os
 import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import src.config as cfg
 import src.colorlist as colors # manage list of colors easier instead of having a bunch of colors in code that are hardcoded
 import src.config as cfg
 import src.dialogue as d
 import src.translations as key
 from pytmx.util_pygame import load_pygame
-
 try:
     os.chdir('../../')
     print(f'Changed to directory: {os.getcwd()}')
@@ -70,33 +68,34 @@ font = pygame.font.SysFont(None, 36)
 # Clock for controlling the frame rate
 CLOCK = pygame.time.Clock()
 
-# Main game loop
+
+object_colliders = [pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+                    for obj in tmx_data.objects if obj.name in ['COL', 'DLG', 'TREE']]
+
+
+# Initialize flags
 # Initialize flags
 dialogue_printed = False
+dialogue_active = False
 right_click_pressed = False
 
+# Main game loop
 # Main game loop
 running = True
 while running:
     dt = CLOCK.tick(cfg.DEFAULT_FPS) / 1000
-    index = 0
-    showing_dialogue = True
 
     # Event handling
-    window.fill(colors.pastel_green)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                index += 1
-                if index >= len(d.dialogues):
-                    showing_dialogue = False
-                else:
-                    print("asddad")
-                    d.draw_text_box(d.dialogues[index]["text"], font, window, 0, 0, 250)
-            elif event.key == pygame.K_k:
+            if event.key == pygame.K_k:
                 cfg.DEBUG = not cfg.DEBUG
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if dialogue_active and event.button == 1:  # Left mouse button
+                dialogue_active = False
+                player.can_move = True
 
     LEFTCLICK, MIDDLECLICK, RIGHTCLICK = pygame.mouse.get_pressed(3)
     MOUSE_POS = pygame.mouse.get_pos()
@@ -105,11 +104,16 @@ while running:
 
     DIALOGUE_RECT = pygame.Rect(0, 0, 25, 25)
     DIALOGUE_OUTPUT = ''
+    DIALOGUE_SPEAKER = ''
 
     keys = pygame.key.get_pressed()
-    player.move_player(keys, player.player_pos, player.player_speed, dt)
+    player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders)
 
-    sprite_group.draw(window)
+    window.fill(colors.pastel_green)  # Fill the background color
+
+    # Draw game elements
+    sprite_group.draw(window)  # Draw tiles and other sprites
+
     for obj in tmx_data.objects:
         pos = obj.x, obj.y
         surf = obj.image
@@ -120,6 +124,10 @@ while running:
         if obj.name == 'DLG':
             DIALOGUE_RECT = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
             DIALOGUE_OUTPUT = obj.properties['Dialogue']
+            try:
+                DIALOGUE_SPEAKER = obj.properties['Speaker']
+            except:
+                pass
             if cfg.DEBUG:
                 pygame.draw.rect(window, 'Blue', DIALOGUE_RECT, 0)
         if obj.name == 'TREE':
@@ -127,22 +135,25 @@ while running:
                 pygame.draw.rect(window, 'Green',
                                  (obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
 
-    # Handle right-click
+    # Draw player sprite
+    if player.current_sprite:
+        window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
+
+    # Handle right-click for dialogue activation
     if MOUSE_RECT.colliderect(DIALOGUE_RECT):
-        if RIGHTCLICK and not right_click_pressed:
-            print(DIALOGUE_OUTPUT)
-            dialogue_printed = True
-            right_click_pressed = True
-        elif not RIGHTCLICK:
-            right_click_pressed = False
+        if RIGHTCLICK:
+            dialogue_active = True
+
+    if dialogue_active:
+        if DIALOGUE_SPEAKER == '':
+            DIALOGUE_SPEAKER = "TEST"
+        d.draw_dialogue_box(DIALOGUE_OUTPUT, DIALOGUE_SPEAKER, font, window, cfg.WINDOW_HEIGHT // 2, cfg.WINDOW_WIDTH // 2, 400)
+        player.can_move = False
 
     if MOUSE_RECT.colliderect(DIALOGUE_RECT) and cfg.DEBUG:
         pygame.draw.rect(window, 'Red', MOUSE_RECT)
     elif cfg.DEBUG and not MOUSE_RECT.colliderect(DIALOGUE_RECT):
         pygame.draw.rect(window, 'Green', MOUSE_RECT)
-
-    if player.current_sprite:
-        window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
 
     # Update the display
     pygame.display.flip()

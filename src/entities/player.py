@@ -6,7 +6,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 os.chdir(project_root)
 
 # Add the project root to the system path to allow module imports
-import config as cfg
+import src.config as cfg
 import pygame
 import math
 
@@ -50,7 +50,7 @@ idle_frames = 1
 sprite_sheet = pygame.image.load(os.path.join('resources', 'textures', 'entities', 'GuyWalkBouncy.png')).convert_alpha()
 
 # Use the original sprite dimensions for extraction
-sprite_width = 15
+sprite_width = 11
 sprite_height = 15
 
 # Get the animated sprites, then scale them individually
@@ -59,12 +59,16 @@ player_sprites = get_animated_sprites_from_sheet(sprite_sheet, sprite_width, spr
 player_pos = [cfg.WINDOW_HEIGHT // 2, cfg.WINDOW_WIDTH // 2]
 player_speed = cfg.PLAYER_SPEED
 
-# Initialize player rect
+# Determine scaled sprite dimensions
+scaled_width = sprite_width * SCALING_FACTOR
+scaled_height = sprite_height * SCALING_FACTOR
+
+# Initialize player rect with scaled dimensions
 player_rect = pygame.Rect(
     player_pos[0],
     player_pos[1],
-    sprite_width * SCALING_FACTOR,
-    sprite_height * SCALING_FACTOR
+    scaled_width,
+    scaled_height
 )
 
 # Global variables
@@ -73,81 +77,114 @@ current_frame = 0
 frame_rate = 12  # Number of frames per second
 frame_timer = 0
 last_direction = "S"  # Initialize last_direction to a default value (e.g., "S" for south)
+moving = False  # Flag to check if player is moving
+prev_pos = [0, 0]  # Initialize with a default value
+can_move = True
 
-def move_player(keys, pos, speed, dt):
-    global current_sprite, current_frame, frame_timer, last_direction, player_rect
+def move_player(keys, pos, speed, dt, colliders):
+    global current_sprite, current_frame, frame_timer, last_direction, player_rect, moving, prev_pos, can_move
+    if can_move:
+        x, y = pos
+        dx, dy = 0, 0
 
-    x, y = pos
-    dx, dy = 0, 0
-    moving = False  # Flag to check if player is moving
+        # Check movement keys
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            dx -= 1
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            dx += 1
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            dy += 1
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            dy -= 1
 
-    # Check movement keys
-    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-        dx -= 1
-        moving = True
-    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-        dx += 1
-        moving = True
-    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-        dy += 1
-        moving = True
-    if keys[pygame.K_UP] or keys[pygame.K_w]:
-        dy -= 1
-        moving = True
+        length = math.sqrt(dx**2 + dy**2)
+        if length != 0:
+            dx /= length
+            dy /= length
 
-    length = math.sqrt(dx**2 + dy**2)
-    if length != 0:
-        dx /= length
-        dy /= length
+        # Calculate new position
+        new_pos = [x + dx * speed, y + dy * speed]
+        new_rect = pygame.Rect(new_pos[0], new_pos[1], player_rect.width, player_rect.height)
 
-    # Update position
-    pos[0] += dx * speed
-    pos[1] += dy * speed
+        # Separate horizontal and vertical collision checks
+        collision_x = False
+        collision_y = False
 
-    # Update player rect position
-    player_rect.topleft = (pos[0], pos[1])
+        # Horizontal collision check
+        temp_rect = pygame.Rect(x + dx * speed, y, player_rect.width, player_rect.height)
+        for collider in colliders:
+            if temp_rect.colliderect(collider):
+                collision_x = True
+                break
 
-    # Determine direction based on movement
-    if dx > 0 and dy > 0:
-        direction = "SE"
-    elif dx > 0 and dy < 0:
-        direction = "NE"
-    elif dx < 0 and dy > 0:
-        direction = "SW"
-    elif dx < 0 and dy < 0:
-        direction = "NW"
-    elif dx > 0:
-        direction = "E"
-    elif dx < 0:
-        direction = "W"
-    elif dy > 0:
-        direction = "S"
-    elif dy < 0:
-        direction = "N"
-    else:
-        direction = last_direction  # If no movement, use last direction
+        # Vertical collision check
+        temp_rect = pygame.Rect(x, y + dy * speed, player_rect.width, player_rect.height)
+        for collider in colliders:
+            if temp_rect.colliderect(collider):
+                collision_y = True
+                break
 
-    # Update last direction if moving
-    if moving:
-        last_direction = direction
+        # Update position based on collision results
+        if not collision_x:
+            pos[0] += dx * speed
+        if not collision_y:
+            pos[1] += dy * speed
 
-    # Ensure direction is valid
-    if direction is None or direction not in player_sprites:
-        direction = last_direction  # Fallback to last direction if current is invalid
+        # Update player rect position
+        player_rect.topleft = (pos[0], pos[1])
 
-    # Update sprite frame
-    if direction and direction in player_sprites:
-        if moving:
-            current_sprite = player_sprites[direction][current_frame]
+        # Determine direction based on movement
+        if dx > 0 and dy > 0:
+            direction = "SE"
+        elif dx > 0 and dy < 0:
+            direction = "NE"
+        elif dx < 0 and dy > 0:
+            direction = "SW"
+        elif dx < 0 and dy < 0:
+            direction = "NW"
+        elif dx > 0:
+            direction = "E"
+        elif dx < 0:
+            direction = "W"
+        elif dy > 0:
+            direction = "S"
+        elif dy < 0:
+            direction = "N"
         else:
-            current_sprite = player_sprites[direction][0]  # Idle frame (first frame)
-    else:
-        # Fallback to idle frame if direction is invalid
-        direction = last_direction if last_direction else "S"  # Use a default direction if last_direction is also None
-        current_sprite = player_sprites.get(direction, [player_sprites["S"][0]])[0]  # Default to "S" idle frame if everything fails
+            direction = last_direction  # If no movement, use last direction
 
-    # Update animation frame if moving
-    frame_timer += dt
-    if moving and frame_timer >= 1 / frame_rate:
-        frame_timer = 0
-        current_frame = (current_frame + 1) % len(player_sprites[direction])
+        # Check if the player has moved far enough to animate
+        move_distance = math.sqrt((pos[0] - prev_pos[0])**2 + (pos[1] - prev_pos[1])**2)
+        move_threshold = 1  # Define a small threshold for movement (adjust as needed)
+
+        if dx != 0 or dy != 0:
+            moving = True
+            last_direction = direction
+        else:
+            moving = False
+
+        # Ensure direction is valid
+        if direction is None or direction not in player_sprites:
+            direction = last_direction  # Fallback to last direction if current is invalid
+
+        # Update sprite frame
+        if direction and direction in player_sprites:
+            if moving and move_distance > move_threshold:
+                current_sprite = player_sprites[direction][current_frame]
+            else:
+                current_sprite = player_sprites[direction][0]  # Idle frame (first frame)
+        else:
+            # Fallback to idle frame if direction is invalid
+            direction = last_direction if last_direction else "S"  # Use a default direction if last_direction is also None
+            current_sprite = player_sprites.get(direction, [player_sprites["S"][0]])[0]  # Default to "S" idle frame if everything fails
+
+        # Update animation frame if moving and moved sufficiently
+        if moving and move_distance > move_threshold:
+            frame_timer += dt
+            if frame_timer >= 1 / frame_rate:
+                frame_timer = 0
+                current_frame = (current_frame + 1) % len(player_sprites[direction])
+
+        # Update previous position
+        prev_pos = pos.copy()
+
