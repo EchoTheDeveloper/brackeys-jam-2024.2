@@ -58,7 +58,7 @@ dialogue_objects = [
     {
         'rect': pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR),
         'dialogue': obj.properties.get('Dialogue', ''),
-        'speaker': obj.properties.get('Speaker', 'TEST')
+        'speaker': obj.properties.get('Speaker', '')
     }
     for obj in tmx_data.objects if obj.name == 'DLG'
 ]
