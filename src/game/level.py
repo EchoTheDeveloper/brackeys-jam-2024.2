@@ -71,7 +71,7 @@ current_dialogue = None  # Store the current dialogue object
 running = True
 while running:
     dt = CLOCK.tick(cfg.DEFAULT_FPS) / 1000
-
+    keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -87,6 +87,13 @@ while running:
                 dialogue_active = False
                 current_dialogue = None
                 player.can_move = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_KP5:
+                if cfg.DEBUG:
+                    cfg.DEBUG = False
+                else:
+                    cfg.DEBUG = True
+
 
     LEFTCLICK, MIDDLECLICK, RIGHTCLICK = pygame.mouse.get_pressed(3)
     MOUSE_POS = pygame.mouse.get_pos()
