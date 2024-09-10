@@ -94,21 +94,20 @@ while running:
     keys = pygame.key.get_pressed()
 
     window.fill(colors.pastel_green)
-
+    object_colliders = [pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+                        for obj in tmx_data.objects if obj.name in ['COL', 'DLG', 'TREE']]
     # Draw tiles and sprites
     sprite_group.draw(window)
 
     for obj in tmx_data.objects:
         if obj.name == 'COL':
-            object_colliders[str(rdm.randint(1, 100))] = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
             if cfg.DEBUG: pygame.draw.rect(window, 'Red', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
         elif obj.name == 'DLG':
             if cfg.DEBUG: pygame.draw.rect(window, 'Blue', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
         elif obj.name == 'TREE':
-            object_colliders[str(rdm.randint(1, 100))] = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
             if cfg.DEBUG: pygame.draw.rect(window, 'Green', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
 
-    player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders.index())
+    player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders)
 
     if player.current_sprite:
         window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
