@@ -30,8 +30,12 @@ def draw_text(text, font, text_color, x, y):
 # play_button = btn.TextButton(320, 340, "Play", font, "#ffffff", "#000000", 1)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 os.chdir(project_root)
+
 play_img = pygame.image.load("resources/textures/UI/MainMenu/play.png").convert_alpha()
 play_button = btn.ImageButton(170, 100, play_img, 1)
+
+quit_img = pygame.image.load("resources/textures/UI/MainMenu/quit.png").convert_alpha()
+quit_button = btn.ImageButton(170, 350, quit_img, 1)
 
 # Main game loop
 running = True
@@ -48,6 +52,8 @@ while running:
     if menu_state == "main":
         if play_button.draw(window):
             import src.game.level as lvl
+        elif quit_button.draw(window):
+            pygame.quit()
     # Update the display
     pygame.display.update()
 
