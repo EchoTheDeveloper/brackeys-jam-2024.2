@@ -8,6 +8,11 @@ import src.config as cfg
 import src.dialogue as d
 import src.translations as key
 from pytmx.util_pygame import load_pygame
+import random as rdm
+
+object_colliders = [
+
+]
 
 # Initialize Pygame
 pygame.init()
@@ -20,6 +25,12 @@ tmx_data = load_pygame(tmx_path)
 sprite_group = pygame.sprite.Group()
 
 TILE_SCALE_FACTOR = 2
+
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft = pos)
 
 # Initialize sprite layers
 for layer in tmx_data.visible_layers:
@@ -52,6 +63,7 @@ dialogue_objects = [
     for obj in tmx_data.objects if obj.name == 'DLG'
 ]
 
+
 # Initialize flags and variables
 dialogue_active = False
 current_dialogue = None  # Store the current dialogue object
@@ -80,24 +92,27 @@ while running:
     MOUSE_POS = pygame.mouse.get_pos()
 
     keys = pygame.key.get_pressed()
-    player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders)
 
     window.fill(colors.pastel_green)
 
     # Draw tiles and sprites
     sprite_group.draw(window)
 
-    if cfg.DEBUG:
-        for obj in tmx_data.objects:
-            if obj.name == 'COL':
-                pygame.draw.rect(window, 'Red', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
-            elif obj.name == 'DLG':
-                pygame.draw.rect(window, 'Blue', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
-            elif obj.name == 'TREE':
-                pygame.draw.rect(window, 'Green', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+    for obj in tmx_data.objects:
+        if obj.name == 'COL':
+            object_colliders[str(rdm.randint(1, 100))] = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+            if cfg.DEBUG: pygame.draw.rect(window, 'Red', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+        elif obj.name == 'DLG':
+            if cfg.DEBUG: pygame.draw.rect(window, 'Blue', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+        elif obj.name == 'TREE':
+            object_colliders[str(rdm.randint(1, 100))] = pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+            if cfg.DEBUG: pygame.draw.rect(window, 'Green', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+
+    player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders.index())
 
     if player.current_sprite:
         window.blit(player.current_sprite, (player.player_pos[0], player.player_pos[1]))
+
 
     # Handle active dialogue
     if dialogue_active and current_dialogue:
