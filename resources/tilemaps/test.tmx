@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="18">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="20">
  <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="330" columns="30">
   <image source="../pngdata/terrain.png" width="480" height="176"/>
  </tileset>
+ <tileset firstgid="331" source="C:/Users/Nick/Downloads/Brackeys Jam 2024/Tiled/Trees.tsx"/>
  <objectgroup id="4" name="Collision">
   <object id="2" name="COL" x="192" y="448" width="80" height="32"/>
   <object id="3" name="COL" x="64" y="0" width="16" height="480"/>
@@ -24,6 +25,8 @@
     <property name="Speaker" value="Echo!"/>
    </properties>
   </object>
+  <object id="18" name="TRUNK" type="TREE" x="336" y="60" width="32" height="20"/>
+  <object id="19" name="LEAVES" type="TREE" x="332" y="24" width="36" height="36"/>
  </objectgroup>
  <layer id="1" name="Ground" width="40" height="30">
   <data encoding="csv">
@@ -65,7 +68,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,333,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,0,0,0,

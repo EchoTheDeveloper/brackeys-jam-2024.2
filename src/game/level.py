@@ -24,25 +24,46 @@ tmx_path = os.path.join(base_dir, '..', '..', 'resources', 'tilemaps', 'test.tmx
 tmx_data = load_pygame(tmx_path)
 sprite_group = pygame.sprite.Group()
 
-TILE_SCALE_FACTOR = 2
+TILE_SCALE_FACTOR = 1.25
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(topleft = pos)
-
+tree_trunks = []
+tree_leaves = []
 # Initialize sprite layers
 for layer in tmx_data.visible_layers:
     if layer.name in cfg.LAYERS:
         for x, y, surf in layer.tiles():
-            pos = (x * 16, y * 16)
+            # pos = (x * 16, y * 16)
+            pos = (x * 16 * TILE_SCALE_FACTOR, y * 16 * TILE_SCALE_FACTOR) # FIXES DRAWING BUG HOWEVER MAKES THE OBJECTS OFFCENTER
+
             scaled_surf = pygame.transform.scale(surf, ((surf.get_width() * TILE_SCALE_FACTOR), (surf.get_height() * TILE_SCALE_FACTOR)))
             Tile(pos = pos, surf = scaled_surf, groups = sprite_group)
     for obj in tmx_data.objects:
+        # pos = obj.x * TILE_SCALE_FACTOR, obj.y * TILE_SCALE_FACTOR
         pos = obj.x, obj.y
+
         surf = obj.image
-        if obj.image:
+        if obj.name == 'TRUNK':
+            # Tree trunks will have collisions
+            rect = pygame.Rect(pos[0], pos[1], obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
+            tree_trunks.append(rect)
+            # object_colliders.append(rect)
+            # Optional: draw trunk now if you want it to appear with other objects
+            if surf:
+                scaled_surf = pygame.transform.scale(surf, (
+                surf.get_width() * TILE_SCALE_FACTOR, surf.get_height() * TILE_SCALE_FACTOR))
+                Tile(pos=pos, surf=scaled_surf, groups=sprite_group)
+        elif obj.name == 'LEAVES':
+            # Leaves will have no collisions, store them for later drawing
+            if surf:
+                scaled_surf = pygame.transform.scale(surf, (
+                surf.get_width() * TILE_SCALE_FACTOR, surf.get_height() * TILE_SCALE_FACTOR))
+                tree_leaves.append((pos, scaled_surf))
+        elif obj.image:
             scaled_surf = pygame.transform.scale(surf, (surf.get_width() * TILE_SCALE_FACTOR), (surf.get_height() * TILE_SCALE_FACTOR))
             Tile(pos = pos, surf = scaled_surf, groups = sprite_group)
 
@@ -102,7 +123,7 @@ while running:
 
     window.fill(colors.pastel_green)
     object_colliders = [pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR)
-                        for obj in tmx_data.objects if obj.name in ['COL', 'DLG', 'TREE']]
+                        for obj in tmx_data.objects if obj.name in ['COL', 'DLG', 'TRUNK']]
     # Draw tiles and sprites
     sprite_group.draw(window)
 
@@ -111,7 +132,7 @@ while running:
             if cfg.DEBUG: pygame.draw.rect(window, 'Red', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
         elif obj.name == 'DLG':
             if cfg.DEBUG: pygame.draw.rect(window, 'Blue', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
-        elif obj.name == 'TREE':
+        elif obj.name == 'TRUNK' or 'LEAVES':
             if cfg.DEBUG: pygame.draw.rect(window, 'Green', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
 
     player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders)
@@ -131,7 +152,8 @@ while running:
             cfg.WINDOW_WIDTH // 2,
             400
         )
-
+    for pos, surf in tree_leaves:
+        window.blit(surf, pos)
     # Update the display
     pygame.display.flip()
 
