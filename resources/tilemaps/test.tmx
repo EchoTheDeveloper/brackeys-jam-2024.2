@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="18">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="20">
  <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="330" columns="30">
   <image source="../pngdata/terrain.png" width="480" height="176"/>
  </tileset>
@@ -17,11 +17,15 @@
     <property name="Speaker" value="Rock"/>
    </properties>
   </object>
-  <object id="16" name="DLG" x="400" y="0" width="64" height="16"/>
-  <object id="17" x="672" y="128">
+  <object id="16" name="DLG" x="400" y="0" width="64" height="16">
    <properties>
-    <property name="Dialogue" value="This is another test of the dialogue system!"/>
+    <property name="Dialogue" value="Testing Stuff"/>
     <property name="Speaker" value="Echo!"/>
+   </properties>
+  </object>
+  <object id="19" name="TLP" x="192" y="0" width="48" height="16">
+   <properties>
+    <property name="Location" value="tp_test"/>
    </properties>
   </object>
  </objectgroup>

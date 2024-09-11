@@ -1,3 +1,5 @@
+import subprocess
+
 import pygame
 import sys
 import os
@@ -26,6 +28,9 @@ sprite_group = pygame.sprite.Group()
 
 TILE_SCALE_FACTOR = 2
 
+def Teleport(location):
+     subprocess.run('python3', f'{location}.py')
+
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
         super().__init__(groups)
@@ -53,6 +58,9 @@ import src.entities.player as player
 font = pygame.font.SysFont(None, 36)
 CLOCK = pygame.time.Clock()
 
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(project_root)
+
 # Store all dialogue objects
 dialogue_objects = [
     {
@@ -61,6 +69,14 @@ dialogue_objects = [
         'speaker': obj.properties.get('Speaker', '')
     }
     for obj in tmx_data.objects if obj.name == 'DLG'
+]
+
+teleport_objects = [
+    {
+        'rect': pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR),
+        'location': obj.properties.get('Location', '')
+    }
+    for obj in tmx_data.objects if obj.name == 'TLP'
 ]
 
 
@@ -75,7 +91,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:  # Right-click
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3: # Right-click
+            for teleport_obj in teleport_objects:
+                if teleport_obj['rect'].collidepoint(event.pos):
+                    Teleport(teleport_obj['location'])
             for dialogue_obj in dialogue_objects:
                 if dialogue_obj['rect'].collidepoint(event.pos):
                     dialogue_active = True
@@ -113,6 +132,8 @@ while running:
             if cfg.DEBUG: pygame.draw.rect(window, 'Blue', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
         elif obj.name == 'TREE':
             if cfg.DEBUG: pygame.draw.rect(window, 'Green', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
+        elif obj.name == 'TP':
+            if cfg.DEBUG: pygame.draw.rect(window, 'Yellow', pygame.Rect(obj.x, obj.y, obj.width * TILE_SCALE_FACTOR, obj.height * TILE_SCALE_FACTOR), 0)
 
     player.move_player(keys, player.player_pos, player.player_speed, dt, object_colliders)
 

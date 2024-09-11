@@ -6,6 +6,10 @@ import src.config as cfg
 import src.button as btn
 import os
 # Initialize Pygame
+
+# file2.py
+import subprocess
+
 pygame.init()
 
 window = pygame.display.set_mode((cfg.WINDOW_HEIGHT, cfg.WINDOW_WIDTH))
