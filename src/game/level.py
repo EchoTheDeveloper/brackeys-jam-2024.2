@@ -29,13 +29,16 @@ sprite_group = pygame.sprite.Group()
 TILE_SCALE_FACTOR = 1.25
 
 def Teleport(location):
-     subprocess.run('python3', f'{location}.py')
+     match location:
+         case 'tp_test':
+             import src.game.tp_test
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(topleft = pos)
+
 tree_trunks = []
 tree_leaves = []
 # Initialize sprite layers
@@ -47,6 +50,7 @@ for layer in tmx_data.visible_layers:
 
             scaled_surf = pygame.transform.scale(surf, ((surf.get_width() * TILE_SCALE_FACTOR), (surf.get_height() * TILE_SCALE_FACTOR)))
             Tile(pos = pos, surf = scaled_surf, groups = sprite_group)
+
     for obj in tmx_data.objects:
         # pos = obj.x * TILE_SCALE_FACTOR, obj.y * TILE_SCALE_FACTOR
         pos = obj.x, obj.y
